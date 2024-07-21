@@ -81,10 +81,7 @@ public class UserInfoCheckManager implements UserInfoCheckService{
 			return true;
 	}
 
-	@Override
-	public void sendConfirmationEmail(User user, String email) {
-		System.out.println("Lütfen kaydınızı tamamlamak için " + email+ " adresine gönderilen onaylama linkine tıklayınız: " + user.getFirstName() );
-	}
+
 	
 	
 	@Override
@@ -98,10 +95,6 @@ public class UserInfoCheckManager implements UserInfoCheckService{
 			return false;
 	}
 
-	@Override
-	public void completeRegistration(User user, String email) {
-		user.setEmailConfirmed(true);
-		
-	}
+	
 
 }

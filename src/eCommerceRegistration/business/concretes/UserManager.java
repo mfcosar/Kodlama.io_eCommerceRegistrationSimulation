@@ -26,7 +26,7 @@ public class UserManager implements UserService{
 	public void registerUser(User user) {
 		
 		if (_userInfoCheckService.isValidUser(user, _userDao.getAll()) && (! user.isEmailConfirmed())) {
-			_userInfoCheckService.sendConfirmationEmail(user, user.getEmail());
+			sendConfirmationEmail(user, user.getEmail());
 		}
 		
 		else if (user.isEmailConfirmed()) {
@@ -35,12 +35,16 @@ public class UserManager implements UserService{
 		}
 		
 	}
+	
+	private void sendConfirmationEmail(User user, String email) {
+		System.out.println("Lütfen kaydınızı tamamlamak için " + email+ " adresine gönderilen onaylama linkine tıklayınız: " + user.getFirstName() );
+	}
 
 	@Override
 	public void completeRegistration(User user, String email) {
-		_userInfoCheckService.completeRegistration(user, email);
+		System.out.println("Email onaylama linkine tıklandı : " + user.getFirstName());
+		user.setEmailConfirmed(true);
 		registerUser(user);
-		
 	}
 
 	@Override
@@ -87,11 +91,12 @@ public class UserManager implements UserService{
 	public void registerWithExternalAccount(User user) {
 		
 		if (_externalAccountValidateService.CheckIfValidUser(user)) {
+			System.out.println("Dış servis hesabı ile sisteme kayıt edildi: " + user.getFirstName() );
 			user.setEmailConfirmed(true);
 			registerUser(user);
-			System.out.println("External account ile sisteme kayıt edildi: " + user.getFirstName() );
+			
 		}
-		else System.out.println("External account ile sisteme kayıt edilemedi. Lütfen bilgilerinizi kontrol ediniz: " + user.getFirstName() );
+		else System.out.println("Dış servis hesabı ile sisteme kayıt edilemedi. Lütfen bilgilerinizi kontrol ediniz: " + user.getFirstName() );
 		
 	}
 
