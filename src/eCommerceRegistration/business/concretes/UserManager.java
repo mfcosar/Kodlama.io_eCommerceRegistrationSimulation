@@ -48,9 +48,9 @@ public class UserManager implements UserService{
 		
 		EmailVerification emailVerification = _emailVerificationService.getOne(user.getId());
 		_emailVerificationService.setVerification(emailVerification);
-		
-		System.out.println("Email onaylama linkine tıklandı : " + user.getFirstName());
 		registerUser(user);
+		
+		System.out.println("Kullanıcının sisteme kaydı tamamlandı : " + user.getFirstName());
 	}
 
 	@Override

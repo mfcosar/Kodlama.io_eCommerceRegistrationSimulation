@@ -1,6 +1,7 @@
 package eCommerceRegistration.business.concretes;
 
 import java.util.List;
+import java.util.Date;
 
 import eCommerceRegistration.business.abstracts.EmailVerificationService;
 import eCommerceRegistration.dataAccess.abstracts.EmailVerificationDao;
@@ -60,7 +61,10 @@ public class EmailVerificationManager implements EmailVerificationService{
 	public void setVerification( EmailVerification emailVerification) {
 		
 		emailVerification.setVerified(true);
+		Date verificationDate = new Date();
+		emailVerification.setVerficationDate(verificationDate);
 		
+		System.out.println(emailVerification.getVerficationDate()+ " tarihinde email onaylama linkine tıklandı.");
 	}
 
 	@Override
