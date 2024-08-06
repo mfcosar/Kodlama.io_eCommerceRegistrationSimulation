@@ -15,5 +15,6 @@ public interface UserService {
 	List<User> getAllUsers();
 	void signIn(String email, String password);
 	void signOut(User user);
+	void signInWithExternalAccount(User user);
 
 }

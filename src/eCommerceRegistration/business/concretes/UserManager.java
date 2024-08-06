@@ -2,10 +2,12 @@ package eCommerceRegistration.business.concretes;
 
 import java.util.List;
 
+import eCommerceRegistration.business.abstracts.EmailVerificationService;
 import eCommerceRegistration.business.abstracts.UserInfoCheckService;
 import eCommerceRegistration.business.abstracts.UserService;
 import eCommerceRegistration.core.ExternalAccountValidateService;
 import eCommerceRegistration.dataAccess.abstracts.UserDao;
+import eCommerceRegistration.entities.concretes.EmailVerification;
 import eCommerceRegistration.entities.concretes.User;
 
 public class UserManager implements UserService{
@@ -13,37 +15,41 @@ public class UserManager implements UserService{
 	private UserInfoCheckService _userInfoCheckService;
 	private UserDao _userDao;
 	private ExternalAccountValidateService _externalAccountValidateService;
+	private EmailVerificationService _emailVerificationService;
 	
 	
-	public UserManager(UserInfoCheckService userInfoCheckService, UserDao userDao, ExternalAccountValidateService externalAccountValidateService) {
+	public UserManager(UserInfoCheckService userInfoCheckService, UserDao userDao, ExternalAccountValidateService externalAccountValidateService, EmailVerificationService emailVerificationService) {
 		this._userInfoCheckService = userInfoCheckService;
 		this._userDao = userDao;
 		this._externalAccountValidateService = externalAccountValidateService;
+		this._emailVerificationService = emailVerificationService;
 		
 	}
 	
 	@Override
 	public void registerUser(User user) {
 		
-		if (_userInfoCheckService.isValidUser(user, _userDao.getAll()) && (! user.isEmailConfirmed())) {
-			sendConfirmationEmail(user, user.getEmail());
+		_emailVerificationService.add(user.getId());
+		
+		if (_userInfoCheckService.isValidUser(user, _userDao.getAll()) && (! _emailVerificationService.getOne(user.getId()).isVerified())) {
+			_emailVerificationService.sendConfirmationEmail(user);
 		}
 		
-		else if (user.isEmailConfirmed()) {
+		else if (_emailVerificationService.getOne(user.getId()).isVerified()) {
 			_userDao.add(user);
 			System.out.println("Kullanıcı sisteme eklendi: " + user.getFirstName());
 		}
 		
 	}
 	
-	private void sendConfirmationEmail(User user, String email) {
-		System.out.println("Lütfen kaydınızı tamamlamak için " + email+ " adresine gönderilen onaylama linkine tıklayınız: " + user.getFirstName() );
-	}
 
 	@Override
 	public void completeRegistration(User user, String email) {
+		
+		EmailVerification emailVerification = _emailVerificationService.getOne(user.getId());
+		_emailVerificationService.setVerification(emailVerification);
+		
 		System.out.println("Email onaylama linkine tıklandı : " + user.getFirstName());
-		user.setEmailConfirmed(true);
 		registerUser(user);
 	}
 
@@ -81,6 +87,17 @@ public class UserManager implements UserService{
 		}
 
 	}
+	
+	@Override
+	public void signInWithExternalAccount(User user) {
+		// if email and password is correct then signIn
+		
+		if (_externalAccountValidateService.CheckIfValidUser(user)) {
+			System.out.println("Dış servis hesabı ile sisteme girildi: " + user.getFirstName() );
+		}
+		else System.out.println("Dış servis hesabı ile sisteme girilemedi. Lütfen bilgilerinizi kontrol ediniz: " + user.getFirstName() );
+
+	}
 
 	@Override
 	public void signOut(User user) {
@@ -92,7 +109,6 @@ public class UserManager implements UserService{
 		
 		if (_externalAccountValidateService.CheckIfValidUser(user)) {
 			System.out.println("Dış servis hesabı ile sisteme kayıt edildi: " + user.getFirstName() );
-			user.setEmailConfirmed(true);
 			registerUser(user);
 			
 		}

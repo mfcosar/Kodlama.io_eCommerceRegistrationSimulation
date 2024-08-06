@@ -9,8 +9,7 @@ public class User implements Entity{
 	private String lastName;
 	private String email;
 	private String password;
-	private boolean isEmailConfirmed;
-	
+		
 	public User() {
 		
 	}
@@ -22,7 +21,7 @@ public class User implements Entity{
 		this.lastName = lastName;
 		this.email = email;
 		this.password = password;
-		this.isEmailConfirmed = false;
+
 		
 	}
 
@@ -66,13 +65,6 @@ public class User implements Entity{
 		this.password = password;
 	}
 
-	public boolean isEmailConfirmed() {
-		return isEmailConfirmed;
-	}
-
-	public void setEmailConfirmed(boolean isEmailConfirmed) {
-		this.isEmailConfirmed = isEmailConfirmed;
-	}
 	
 	
 	
